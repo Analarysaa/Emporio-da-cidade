@@ -1,0 +1,27 @@
+- Tecnologia usada
+• Java com Spring, Jpa e hibernate.
+• Postgres como banco de dados 
+
+Para fazer esse clone, você deve ter o git instalado em sua máquina. 
+Com o git instalado, na linha de comando vamos clonar o projeto da seguinte forma:
+$ git clone https://github.com/Analarysa/Emporio-da-cidade.git
+Após esse comando, o nosso sistema já estará clonado dentro da pasta POFOMD. Para que o sistema funcione corretamente, precisaremos ter instalados em nossa máquina alguns pacotes específicos e, principalmente, o Perl e uma base de dados, e nesse caso vamos usar o PostgreSQL.
+Em debians-like, usaremos o seguinte comando para instalar tudo o que precisamos no nosso sistema:
+$ sudo apt-get install git postgresql postgresql-server-dev-all cpanminus libxml-sax-expat-perl libdbix-class-perl
+Agora, entraremos na pasta do nosso projeto e instalaremos todas as dependências Perl necessárias para o nosso projeto específico:
+$ cd POFOMD
+$ sudo cpanm inc::Module::Install
+$ sudo cpanm Module::Install::Catalyst
+$ sudo cpanm --installdeps .
+$ sudo perl Makefile.PL
+A partir deste ponto, já temos tudo o que precisamos instalado em nosso ambiente local, basta agora ajustarmos as configurações do banco de dados PostgreSQL
+No caso específico deste projeto, onde há uma grande quantidade de dados para serem agrupados para uso, isso facilita muito a utilização de bancos relacionais.
+$ sudo su postgres
+$ createuser seu_user
+$ createdb seu_db
+$ exit
+$ sudo su postgres -c psql
+postgres=# alter role seu_user with encrypted password 'seu_pass';
+Configurações de banco de dados ajustadas, vamos agora instalar todas as tabelas necessárias para o nosso projeto:
+$ sudo dbicadmin -Ilib --schema=POFOMD::Schema --connect='["dbi:Pg:host=localhost;dbname=seu_db", "seu_user", "seu_pass"]' --deploy
+E agora você deve ajustar o arquivo pofomd.conf, que fica na raiz do projeto, e colocar todas as configurações corretas de conexão com o banco de dados.
